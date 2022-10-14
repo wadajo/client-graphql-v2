@@ -5,13 +5,10 @@ import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.context.annotation.Bean;
 import org.springframework.graphql.client.HttpGraphQlClient;
-import reactor.core.publisher.Mono;
 
 import java.time.Duration;
 import java.time.temporal.ChronoUnit;
-import java.util.Collection;
 import java.util.List;
-import java.util.stream.Stream;
 
 @SpringBootApplication
 public class GraphqlClientApplication {
@@ -49,6 +46,9 @@ public class GraphqlClientApplication {
 		return (args) -> {
 			System.out.println("Estos son los artistas de los cuales hemos encontrado su fecha de nacimiento:");
 			graphQlClient
+					.mutate()
+					.header("Authorization","Basic anVsaW86YXJ0ZUJBMjAyMg==")
+					.build()
 					.document("""
 								query{
 									 artistas{
@@ -71,3 +71,5 @@ public class GraphqlClientApplication {
 //Mi definición de artista, distinta a la de la API externa
 record Artista(String apellido, Integer nacimiento) {
 }
+
+record Documento(String id, String nombre){}
