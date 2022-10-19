@@ -44,7 +44,7 @@ public class GraphqlClientApplication {
 	@Bean
 	CommandLineRunner inicio(HttpGraphQlClient graphQlClient) {
 		return (args) -> {
-			System.out.println("Estos son los artistas de los cuales hemos encontrado su fecha de nacimiento:");
+			System.out.println("\nEstos son los artistas de los cuales hemos encontrado su fecha de nacimiento:");
 			graphQlClient
 					.mutate()
 					.header("Authorization","Basic anVsaW86YXJ0ZUJBMjAyMg==")
@@ -61,9 +61,12 @@ public class GraphqlClientApplication {
 					.map(artistas -> artistas.stream()
 							.map(artista -> new Artista(artista.apellido(), buscarAnoDelArtista(artista.apellido())))
 					)
-					.block(Duration.of(4, ChronoUnit.SECONDS))
-					.filter(artista -> artista.nacimiento() > 0)
-					.forEach(System.out::println);
+					.subscribe(
+							stream->stream  //onNext, solo recibimos un elemento, un Stream de varios artistas
+								.filter(artista -> artista.nacimiento()>0)
+								.forEach(artista-> System.out.println(artista.apellido()+", nacido: "+artista.nacimiento())),
+							error-> System.out.println("Ha habido un error"), //onError
+							() -> System.out.println("\nEso ha sido todo"));  //onComplete
 		};
 	}
 }
