@@ -72,7 +72,4 @@ public class GraphqlClientApplication {
 }
 
 //Mi definición de artista, distinta a la de la API externa
-record Artista(String apellido, Integer nacimiento) {
-}
-
-record Documento(String id, String nombre){}
+record Artista(String apellido, Integer nacimiento) {}
