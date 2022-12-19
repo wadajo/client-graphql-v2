@@ -8,6 +8,7 @@ import org.springframework.graphql.client.HttpGraphQlClient;
 
 import java.time.Duration;
 import java.time.temporal.ChronoUnit;
+import java.util.ArrayList;
 import java.util.List;
 
 @SpringBootApplication
@@ -67,6 +68,25 @@ public class GraphqlClientApplication {
 								.forEach(artista-> System.out.println(artista.apellido()+", nacido: "+artista.nacimiento())),
 							error-> System.out.println("Ha habido un error"), //onError
 							() -> System.out.println("\nEso ha sido todo"));  //onComplete
+
+			graphQlClient
+					.mutate()
+					.header("Authorization","Basic dmlzaXRhbnRlOm1lZ3VzdGFlbGFydGU=")
+					.build()
+					.document("""
+								query artistaPorId($unId:ID){
+									artistaPorId(id:$unId){
+										apellido
+									}
+								 }
+							""")
+					.variable("unId",1)
+					.retrieve("artistaPorId")
+					.toEntity(Artista.class)
+					.subscribe(
+							encontrado->System.out.println("\nEste es el artista de ID 1.\nApellido:"+encontrado.apellido()), //onNext, solo recibimos un elemento, un artista solo con apellido
+							error-> System.out.println("Ha habido un error"), //onError
+							() -> System.out.println("\nEso ha sido todo"));
 		};
 	}
 }
